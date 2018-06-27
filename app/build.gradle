@@ -8,6 +8,14 @@ apply plugin: 'kotlin-android-extensions'
 
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'weatherappkey'
+            keyPassword 'WeatherApp123!'
+            storeFile file('../androidkeystore.jks')
+            storePassword 'WeatherApp123!'
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.chanpyaeaung.weatherapp"
@@ -21,14 +29,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
     kapt {
         generateStubs = true
     }

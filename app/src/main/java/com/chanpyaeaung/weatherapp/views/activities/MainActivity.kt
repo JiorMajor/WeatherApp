@@ -68,6 +68,10 @@ class MainActivity : AppCompatActivity(), HasActivityInjector {
                         dialog.dismiss()
                     })
                     .create()
+            builder.setOnShowListener{ dialog ->
+                builder.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.black))
+                builder.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.black))
+            }
             val dialog = builder.show()
             return@setOnLongClickListener true
         }
@@ -115,20 +119,17 @@ class MainActivity : AppCompatActivity(), HasActivityInjector {
                         viewModel.setLocation(lat, lng)
                         viewModel.getWeather().observe(this, Observer { weather -> updateUI(weather) })
                     } else {
-                        currentWeather = list.get(0)
-                        updateUI(currentWeather)
+                        updateUI(list.get(0))
                     }
                 } else {
-                    currentWeather = list.get(0)
-                    updateUI(currentWeather)
+                    updateUI(list.get(0))
                 }
                 if(!list.isEmpty()) {
-                    val othersWeathers = updateWeatherList(list.get(0), list)
+                    val othersWeathers = updateWeatherList(list)
                     weatherAdapter = WeatherAdapter(this, othersWeathers, object: WeatherAdapter.CustomClickListener{
                          override fun onItemClick(view: View, position: Int) {
-                             currentWeather = weatherAdapter.getItem(position)
-                             updateUI(currentWeather)
-                             val others = updateWeatherList(currentWeather, list)
+                             updateUI(weatherAdapter.getItem(position))
+                             val others = updateWeatherList(list)
                              weatherAdapter.replaceItems(others)
                         }
                     })
@@ -154,6 +155,7 @@ class MainActivity : AppCompatActivity(), HasActivityInjector {
     fun updateUI(weatherModelEntity: WeatherModelEntity?) {
 
         if(weatherModelEntity != null) {
+            currentWeather = weatherModelEntity
             ivWeather.setImageDrawable(resources.getDrawable(weatherModelEntity.icon))
             tvWeather.text = weatherModelEntity.condition
             tvCity.text = weatherModelEntity.name
@@ -163,11 +165,10 @@ class MainActivity : AppCompatActivity(), HasActivityInjector {
 
     }
 
-    fun updateWeatherList(weatherModelEntity: WeatherModelEntity, mList: List<WeatherModelEntity>): ArrayList<WeatherModelEntity> {
-        currentWeather = weatherModelEntity
+    fun updateWeatherList(mList: List<WeatherModelEntity>): ArrayList<WeatherModelEntity> {
         val othersWeathers = ArrayList<WeatherModelEntity>()
         for(w in mList) {
-            if(w.id != currentWeather.id) {
+            if(!w.name.equals(tvCity.text.toString(), false)) {
                 othersWeathers.add(w)
             }
         }
