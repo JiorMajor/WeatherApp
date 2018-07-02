@@ -10,10 +10,10 @@ apply plugin: 'kotlin-android-extensions'
 android {
     signingConfigs {
         config {
-            keyAlias 'weatherappkey'
-            keyPassword 'WeatherApp123!'
-            storeFile file('../androidkeystore.jks')
-            storePassword 'WeatherApp123!'
+            keyAlias rootProject.ext.keyAlias
+            keyPassword rootProject.ext.keyPassword
+            storeFile file(rootProject.ext.fileLocation)
+            storePassword rootProject.ext.storePassword
         }
     }
     compileSdkVersion 27
